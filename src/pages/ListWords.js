@@ -10,7 +10,6 @@ const data = ["hello", "sign", "common", "morning", "fire", "moon", "light", "le
 function ListWords({ navigation }) {
     const [option, setOptions] = useState(1);
     const [dataSave, setDataSave] = useState([]);
-    const [dataFav, setDataFav] = useState([]);
 
     useEffect(() => {
         
