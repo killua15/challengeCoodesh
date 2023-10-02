@@ -1,13 +1,14 @@
-import { Box, CheckIcon, Text, Heading, Select, ScrollView, VStack, Center, Stack, Alert, FlatList, Flex, Button } from "native-base";
-import { View, TouchableOpacity } from "react-native";
+import { Flex } from "native-base";
 import History from "../services/localService/history_service";
 import { useEffect, useState } from "react";
 import MainList from "../components/MainList";
 import TabsOptions from "../components/TabsOptions";
 import ListComponent from "../components/ListComponent";
 import Favorites from "../services/localService/favorites_service";
-const data = ["hello", "sign", "common", "morning", "fire", "moon", "light", "length"]
+import allWords from "../services/all_words";
+
 function ListWords({ navigation }) {
+    const [data, setData] = useState(1);
     const [option, setOptions] = useState(1);
     const [dataSave, setDataSave] = useState([]);
 
@@ -15,7 +16,9 @@ function ListWords({ navigation }) {
         
         (
             async () => {
-                console.log(option)
+                const response = await allWords();
+                console.log(response.data);
+                setData(response.data);
                 if (option == 2) {
                     const save = await History.getHistories();
                     setDataSave(save);
