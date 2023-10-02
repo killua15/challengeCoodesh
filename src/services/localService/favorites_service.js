@@ -16,7 +16,6 @@ const saveFavorites = async (word) => {
         favArray = Array();
         favArray.push(word);
     }
-    console.log("favorite",favArray);
     await AsyncStorage.setItem('favorite', JSON.stringify(favArray));
 }
 
