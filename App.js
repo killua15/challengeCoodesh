@@ -4,7 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ListWords from "./src/pages/ListWords";
 import Meanings from "./src/pages/Meanings";
-
+import {Provider} from 'inversify-react'
+import { container } from "./src/injectDependency/inversify_config";
 
 const headerOptions = {
          
@@ -23,6 +24,7 @@ const Stack = createNativeStackNavigator();
 export default () => {
   
   return (
+     <Provider container={container}>
     <NativeBaseProvider >
       <NavigationContainer>
       <Stack.Navigator>
@@ -32,5 +34,6 @@ export default () => {
       </NavigationContainer>
      
     </NativeBaseProvider>
+   </Provider>
   );
 };

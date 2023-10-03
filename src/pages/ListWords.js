@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import MainList from "../components/MainList";
 import TabsOptions from "../components/TabsOptions";
 import ListComponent from "../components/ListComponent";
-import Favorites from "../services/localService/favorites_service";
+import { FavoriteStorage } from "../services/localService/favorites_service";
 import allWords from "../services/all_words";
+import { container } from "../injectDependency/inversify_config";
 
 function ListWords({ navigation }) {
     const [data, setData] = useState(1);
     const [option, setOptions] = useState(1);
     const [dataSave, setDataSave] = useState([]);
-    
+    let _favoriteStorage = container.get(FavoriteStorage);
     const initFunction = async () => {
         console.log(option)
         const response = await allWords();
@@ -21,7 +22,7 @@ function ListWords({ navigation }) {
             setDataSave(save);
         }
         if (option == 3) {
-            const save = await Favorites.getFavorites();
+            const save = await _favoriteStorage.getFavorites();
             setDataSave(save);
         }
     }

@@ -3,20 +3,26 @@ import transtaleWord from "../services/translateWord";
 import loadingComponent from "../components/LoadingComponent";
 import MeaningComponent from "../components/MeaningComponent";
 import History from "../services/localService/history_service";
-import Favorites from "../services/localService/favorites_service";
+import { FavoriteStorage } from "../services/localService/favorites_service";
+import SoundPlayer from "react-native-sound-player";
+import { resolve } from "inversify-react";
+import { container } from "../injectDependency/inversify_config";
 
-function Meanings({ navigation, route }) {
+
+const  Meanings = ({ navigation, route }) => {
+  
+
     const [meanings, setMeanings] = useState("");
     const [wordTranslateFonetic, setWordTranslateFonetic] = useState("");
     const [urlAudio, setUrlAudio] = useState("");
     const [loading, setLoading] = useState(true);
     const [fav, setFavorite] = useState(false);
-
+     let _favoriteStorage = container.get(FavoriteStorage);
+    
     useEffect(() => {
-       
         (
           async () => {
-            console.log("favoritesList", await Favorites.getFavorites())
+             console.log("favoritesList", await _favoriteStorage.getFavorites())
             console.log("HistoryList", await History.getHistories())
 
             const response = await transtaleWord(`${route.params.word}`);
@@ -32,7 +38,7 @@ function Meanings({ navigation, route }) {
             History.saveHistory(route.params.word)
             setLoading(false);
 
-            const fav = await Favorites.isWordFavorite(route.params.word);
+            const fav = await _favoriteStorage.isWordFavorite(route.params.word);
             setFavorite(fav);
           }
         )()
@@ -40,17 +46,27 @@ function Meanings({ navigation, route }) {
     }, []);
 
     const setFav = async () =>{
-        if(await Favorites.isWordFavorite(route.params.word)){
-            await Favorites.deleteFavorites(route.params.word);
+        if(await _favoriteStorage.isWordFavorite(route.params.word)){
+            await _favoriteStorage.deleteFavorites(route.params.word);
             setFavorite(false)
         }else{
-            await Favorites.saveFavorites(route.params.word);
+            await _favoriteStorage.saveFavorites(route.params.word);
             setFavorite(true)
         }
         
     }
+
+    playPronunce = (url) => {
+       try {
+            
+            SoundPlayer.playUrl(url)
+       } catch (e) {
+           console.log(`cannot play the sound file`, e)
+       }
+    }
+
     return (
-        loading ? loadingComponent() : MeaningComponent(meanings,wordTranslateFonetic,urlAudio, setFav,fav)
+        loading ? loadingComponent() : MeaningComponent(meanings,wordTranslateFonetic,urlAudio, setFav,fav, playPronunce)
     );
 }
 
